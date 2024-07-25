@@ -8,7 +8,56 @@
 - 本地仓库：.git文件夹里还包括git自动创建的master分支，并且将HEAD指针指向master分支。使用commit命令可以将暂存区中的文件添加到本地仓库中；
 - 远程仓库：不是在本地仓库中，项目代码在远程git服务器上，比如项目放在github上，就是一个远程仓库，通常使用clone命令将远程仓库拷贝到本地仓库中，开发后推送到远程仓库中即可
 
+# git 命令参数
 
+## --global
+
+修改git的全局配置文件`~/.gitconfig`，而不是某个git仓库中的配置文件 `.git/config`
+
+
+
+
+# git原理相关
+
+## 支持的传输协议
+
+Git 支持的传输协议有 ssh、git、http 和 https 协议（此外，ftp 和 ftps 也可用于拉取，但在 Git 官方文档中提到是低效且过时的，不建议使用）。其中原生传输协议（即 git:// URL）不做鉴权，在不安全的网络环境下应谨慎使用。
+
+不同传输协议的使用示例
+
+
+- ssh
+```
+ssh://[user@]host.xz[:port]/path/to/repo.git/ 或 [user@]host.xz:path/to/repo.git/
+```
+
+> 实例
+```
+git@github.com:cms-sw/cmssw.git
+ssh://git@github.com/cms-sw/cmssw.git
+```
+
+- git
+
+```
+git://host.xz[:port]/path/to/repo.git/
+```
+- http / https
+```
+http[s]://host.xz[:port]/path/to/repo.git/
+```
+ > 实例
+```
+http://github.com/cms-sw/cmssw.git
+https://github.com/cms-sw/cmssw.git
+```
+
+- ftp / ftps
+```
+ftp[s]://host.xz[:port]/path/to/repo.git/
+```
+
+**常用的传输协议有:HTTP/HTTPS、SSH**
 
 # branch分支操作
 - git branch -D 【分支名】
@@ -122,6 +171,7 @@ Aborting
 
 # 查看git配置
 
+
 ```sh
 # 方式一
 git config --global --list
@@ -130,13 +180,56 @@ git config --list
 ```
 
 ## 设置http代理
+
+- 为什么要设置代理服务器？？？
+
+代理服务器可以在客户端和服务器之间充当中间人服务器。
+
+- 有什么作用？
+
+常用于加速访问、访问控制、访问安全等。
+
+- git的http代理有什么用？
+
+举一个实际的场景。为保障公司内部网络安全、防止敏感数据泄露，在公司内网中，git访问互联网可能受到限制。
+
+- git 使用 HTTP / HTTPS 传输协议的代理方法
+
+```
+git config --global http.proxy <protocol>://<host>:<port>
+```
+> 参数
+- `<protocol>`:代理协议。厂用的协议有:`http/https/socks5`
+- `<host>`:代理主机。使用本地代理主机`127.0.0.1`或`host`
+- `<port>`：代理端口号。clash使用的通常是7890
+
+> 示例
+
 ```sh
-git config --global http.proxy 【代理地址（常用：http://127.0.0.1:端口号）】
-git config --global https.proxy 【代理地址（常用：http://127.0.0.1:端口号）】
+git config --global http.proxy http://127.0.0.1:7890
+git config --global https.proxy http://127.0.0.1:7890
 ```
 
 ## 取消http代理
 ```sh
 git config --global --unset http.proxy
 git config --global --unset https.proxy
+```
+
+## 针对特定仓库的http代理
+
+
+如果直接设置 `http.proxy` ，所有域名（比如gitee、github、gitlab等）下的仓库都会走代理，我们也可以针对特定的域名走代理
+
+> 操作方式
+
+```
+git config --global http.<url>.proxy <protocol>://<host>:<port>
+```
+- `<url>`:表示仅仅在该域名下使用代理
+
+> 示例:下面设置了`<url>`为`https://github.com`,表示仅仅对github仓库中的代码使用代理
+
+```
+git config --global http.https://github.com.proxy http://127.0.0.1:7890
 ```
