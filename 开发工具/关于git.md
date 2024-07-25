@@ -118,3 +118,25 @@ Aborting
 - release: 发布新版本
 - workflow: 工作流相关文件修改
 
+
+
+# 查看git配置
+
+```sh
+# 方式一
+git config --global --list
+# 方式二
+git config --list 
+```
+
+## 设置http代理
+```sh
+git config --global http.proxy 【代理地址（常用：http://127.0.0.1:端口号）】
+git config --global https.proxy 【代理地址（常用：http://127.0.0.1:端口号）】
+```
+
+## 取消http代理
+```sh
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+```
